@@ -1,0 +1,28 @@
+INFO:__main__:Loading model from PlantSeg/work_dirs/segnext_mscan-l_test/iter_1000.pth...
+d:\colabecothoughts\mmsegmentation\mmsegmentation\mmseg\models\losses\cross_entropy_loss.py:250: UserWarning: Default ``avg_non_ignore`` is False, if you would like to ignore the certain label and average loss over non-ignore labels, which is the same with PyTorch official cross_entropy, set ``avg_non_ignore=True``.
+  warnings.warn(
+INFO:__main__:[OK] Model loaded successfully!
+======================================================================
+PLANT DISEASE DETECTOR - WEB SERVER (IMPROVED)
+======================================================================
+Device: cuda
+Allowed file types: jpg, bmp, tiff, gif, jpeg, png
+Loads checkpoint by local backend from path: PlantSeg/work_dirs/segnext_mscan-l_test/iter_1000.pth
+
+[*] Starting Flask server...
+Visit http://localhost:5000 in your browser
+
+Features:
+  [OK] Supports: JPG, PNG, BMP, GIF, TIFF
+  [OK] Max file size: 16MB
+  [OK] Image size validation (50-4096 pixels)
+  [OK] Automatic image preprocessing & resizing
+  [OK] Comprehensive error handling
+======================================================================
+ * Serving Flask app 'web_interface'
+ * Debug mode: off
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.13.0.25:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m

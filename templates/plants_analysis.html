@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plants Analysis - Agricultural AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #95e77d 0%, #72c657 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2em; margin-bottom: 10px; }
+        .nav-back {
+            background: #fff;
+            padding: 15px 30px;
+            border-bottom: 1px solid #eee;
+        }
+        .nav-back a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .content { padding: 40px; }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .loading { display: none; text-align: center; padding: 30px; }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .results { display: none; margin-top: 30px; padding: 20px; border-radius: 10px; }
+        .results-healthy { background: #d4edda; border-left: 5px solid #28a745; }
+        .results-risk { background: #fff3cd; border-left: 5px solid #ffc107; }
+        .health-score { font-size: 2em; font-weight: bold; margin: 20px 0; color: #333; }
+        .recommendation-item { padding: 10px; background: #f8f9fa; margin: 8px 0; border-radius: 5px; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+        .info-box { background: #f8f9fa; padding: 15px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌱 Plants Analysis</h1>
+            <p>Monitor plant health and growth with AI predictions</p>
+        </div>
+        
+        <div class="nav-back">
+            <a href="/">← Back to Menu</a>
+        </div>
+        
+        <div class="content">
+            <form id="plantsForm">
+                <h2>📋 Plant Information</h2>
+                
+                <div class="form-group">
+                    <label for="plantType">Plant Type</label>
+                    <select id="plantType" required>
+                        <option value="">Select a plant type</option>
+                        <option value="Tomato">Tomato</option>
+                        <option value="Lettuce">Lettuce</option>
+                        <option value="Carrot">Carrot</option>
+                        <option value="Corn">Corn</option>
+                        <option value="Wheat">Wheat</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="age">Plant Age (days)</label>
+                        <input type="number" id="age" step="1" min="1" value="30" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="growth">Growth Rate (cm/week)</label>
+                        <input type="number" id="growth" step="0.5" min="0" value="5" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="leafColor">Leaf Color</label>
+                    <select id="leafColor" required>
+                        <option value="Green">Healthy Green</option>
+                        <option value="Pale Green">Pale Green</option>
+                        <option value="Yellow">Yellow</option>
+                        <option value="Brown">Brown</option>
+                        <option value="Purple">Purple</option>
+                    </select>
+                </div>
+                
+                <button type="button" onclick="analyzePlants()">🔍 Analyze Plant Health</button>
+            </form>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Analyzing plant health...</p>
+            </div>
+            
+            <div class="results" id="results">
+                <div id="resultsContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function analyzePlants() {
+            const data = {
+                plant_type: document.getElementById('plantType').value,
+                plant_age: document.getElementById('age').value,
+                growth_rate: document.getElementById('growth').value,
+                leaf_color: document.getElementById('leafColor').value
+            };
+
+            if (!data.plant_type) {
+                alert('Please select a plant type');
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'block';
+            
+            try {
+                const response = await fetch('/api/analyze-plants', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.error) {
+                    document.getElementById('resultsContent').innerHTML = `<h3>❌ Error</h3><p>${result.error}</p>`;
+                    document.getElementById('results').className = 'results';
+                } else {
+                    const resultClass = result.health_score >= 70 ? 'results-healthy' : 'results-risk';
+                    
+                    let recsHtml = '';
+                    result.recommendations.forEach(rec => {
+                        recsHtml += `<div class="recommendation-item">✓ ${rec}</div>`;
+                    });
+                    
+                    document.getElementById('resultsContent').innerHTML = `
+                        <h3>${result.plant_type} - Health Report</h3>
+                        <div class="health-score">Health Score: ${result.health_score}/100</div>
+                        <p style="font-size: 1.2em; color: ${result.status === 'Healthy' ? '#28a745' : '#ffc107'};">
+                            <strong>Status: ${result.status}</strong>
+                        </p>
+                        
+                        <div class="info-grid">
+                            <div class="info-box">
+                                <strong>Current Age</strong>
+                                <p>${result.current_age} days</p>
+                            </div>
+                            <div class="info-box">
+                                <strong>Projected Age (30 days)</strong>
+                                <p>${result.projected_age_30days.toFixed(0)} days</p>
+                            </div>
+                            <div class="info-box">
+                                <strong>Growth Rate</strong>
+                                <p>${result.growth_rate}</p>
+                            </div>
+                        </div>
+                        
+                        <h4>🍃 Leaf Condition:</h4>
+                        <p>${result.leaf_condition}</p>
+                        
+                        <h4>📋 Care Recommendations:</h4>
+                        <div>${recsHtml}</div>
+                    `;
+                    document.getElementById('results').className = `results ${resultClass}`;
+                }
+                document.getElementById('results').style.display = 'block';
+            } catch (error) {
+                document.getElementById('resultsContent').innerHTML = `<h3>❌ Error</h3><p>${error.message}</p>`;
+                document.getElementById('results').className = 'results';
+                document.getElementById('results').style.display = 'block';
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

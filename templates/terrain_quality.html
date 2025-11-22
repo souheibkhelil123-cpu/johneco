@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terrain Quality - Agricultural AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2em; margin-bottom: 10px; }
+        .nav-back {
+            background: #fff;
+            padding: 15px 30px;
+            border-bottom: 1px solid #eee;
+        }
+        .nav-back a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .content { padding: 40px; }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .loading { display: none; text-align: center; padding: 30px; }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .results { display: none; margin-top: 30px; padding: 20px; border-radius: 10px; }
+        .results-excellent { background: #d4edda; border-left: 5px solid #28a745; }
+        .results-good { background: #d1ecf1; border-left: 5px solid #17a2b8; }
+        .results-fair { background: #fff3cd; border-left: 5px solid #ffc107; }
+        .results-poor { background: #f8d7da; border-left: 5px solid #dc3545; }
+        .score { font-size: 2em; font-weight: bold; margin: 20px 0; }
+        .issues, .recommendations { margin: 20px 0; }
+        .issue-item, .rec-item { padding: 10px; background: #f8f9fa; margin: 8px 0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌍 Terrain Quality Analysis</h1>
+            <p>Input sensor data to analyze soil and environmental conditions</p>
+        </div>
+        
+        <div class="nav-back">
+            <a href="/">← Back to Menu</a>
+        </div>
+        
+        <div class="content">
+            <form id="terrainForm">
+                <h2>📊 Sensor Data Input</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ph">Soil pH (0-14)</label>
+                        <input type="number" id="ph" step="0.1" min="0" max="14" value="6.5" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="moisture">Soil Moisture (%)</label>
+                        <input type="number" id="moisture" step="1" min="0" max="100" value="50" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="temp">Temperature (°C)</label>
+                        <input type="number" id="temp" step="0.1" value="25" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="humidity">Humidity (%)</label>
+                        <input type="number" id="humidity" step="1" min="0" max="100" value="60" required>
+                    </div>
+                </div>
+                
+                <h2 style="margin-top: 30px;">🌱 Nutrient Levels (0-100)</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nitrogen">Nitrogen (N)</label>
+                        <input type="number" id="nitrogen" step="1" min="0" max="100" value="50" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phosphorus">Phosphorus (P)</label>
+                        <input type="number" id="phosphorus" step="1" min="0" max="100" value="50" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="potassium">Potassium (K)</label>
+                        <input type="number" id="potassium" step="1" min="0" max="100" value="50" required>
+                    </div>
+                </div>
+                
+                <button type="button" onclick="analyzeTerrain()">🔬 Analyze Terrain</button>
+            </form>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Analyzing soil conditions...</p>
+            </div>
+            
+            <div class="results" id="results">
+                <div id="resultsContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function analyzeTerrain() {
+            const data = {
+                soil_ph: document.getElementById('ph').value,
+                soil_moisture: document.getElementById('moisture').value,
+                temperature: document.getElementById('temp').value,
+                humidity: document.getElementById('humidity').value,
+                nitrogen: document.getElementById('nitrogen').value,
+                phosphorus: document.getElementById('phosphorus').value,
+                potassium: document.getElementById('potassium').value
+            };
+
+            document.getElementById('loading').style.display = 'block';
+            
+            try {
+                const response = await fetch('/api/analyze-terrain', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.error) {
+                    document.getElementById('resultsContent').innerHTML = `<h3>❌ Error</h3><p>${result.error}</p>`;
+                    document.getElementById('results').className = 'results';
+                } else {
+                    const resultClass = result.quality_level === 'Excellent' ? 'results-excellent' : 
+                                       result.quality_level === 'Good' ? 'results-good' :
+                                       result.quality_level === 'Fair' ? 'results-fair' : 'results-poor';
+                    
+                    let issuesHtml = '';
+                    result.issues.forEach(issue => {
+                        issuesHtml += `<div class="issue-item">${issue}</div>`;
+                    });
+                    
+                    let recsHtml = '';
+                    result.recommendations.forEach(rec => {
+                        recsHtml += `<div class="rec-item">✓ ${rec}</div>`;
+                    });
+                    
+                    document.getElementById('resultsContent').innerHTML = `
+                        <h3>Terrain Quality Analysis</h3>
+                        <div class="score">${result.quality_level} (${result.quality_score}/100)</div>
+                        
+                        <h4>Issues Found:</h4>
+                        <div class="issues">${issuesHtml}</div>
+                        
+                        <h4>Recommendations:</h4>
+                        <div class="recommendations">${recsHtml}</div>
+                    `;
+                    document.getElementById('results').className = `results ${resultClass}`;
+                }
+                document.getElementById('results').style.display = 'block';
+            } catch (error) {
+                document.getElementById('resultsContent').innerHTML = `<h3>❌ Error</h3><p>${error.message}</p>`;
+                document.getElementById('results').className = 'results';
+                document.getElementById('results').style.display = 'block';
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

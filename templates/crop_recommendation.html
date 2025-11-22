@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌾 Crop Recommendation AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid #ecf0f1;
+            background: #f8f9fa;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 1.05em;
+            font-weight: 600;
+            color: #7f8c8d;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tab-button:hover {
+            background: #ecf0f1;
+            color: #2ecc71;
+        }
+
+        .tab-button.active {
+            color: #2ecc71;
+            border-bottom-color: #2ecc71;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 40px;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ecf0f1;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #2ecc71;
+            box-shadow: 0 0 5px rgba(46, 204, 113, 0.3);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+
+        .btn-secondary:hover {
+            background: #bdc3c7;
+        }
+
+        .result-box {
+            background: #f8f9fa;
+            border-left: 4px solid #2ecc71;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .result-box.show {
+            display: block;
+        }
+
+        .result-box h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .result-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            border-left: 3px solid #3498db;
+        }
+
+        .result-item strong {
+            color: #2c3e50;
+        }
+
+        .result-value {
+            color: #2ecc71;
+            font-weight: 700;
+        }
+
+        .crop-card {
+            background: white;
+            border: 2px solid #ecf0f1;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+
+        .crop-card:hover {
+            border-color: #2ecc71;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.2);
+        }
+
+        .crop-card h4 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+            text-transform: capitalize;
+        }
+
+        .crop-probability {
+            background: #ecf0f1;
+            border-radius: 3px;
+            overflow: hidden;
+            height: 20px;
+            margin-top: 8px;
+        }
+
+        .probability-fill {
+            background: linear-gradient(90deg, #2ecc71 0%, #27ae60 100%);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .recommendation-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .recommendation-list li {
+            padding: 10px;
+            background: white;
+            margin: 8px 0;
+            border-left: 3px solid #e74c3c;
+            color: #2c3e50;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+            margin: 10px 5px 10px 0;
+        }
+
+        .status-optimal {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+
+        .status-deficient {
+            background: #fadbd8;
+            color: #c0392b;
+        }
+
+        .status-excess {
+            background: #fce5cd;
+            color: #d68910;
+        }
+
+        .status-acidic {
+            background: #fadbd8;
+            color: #c0392b;
+        }
+
+        .status-alkaline {
+            background: #fce5cd;
+            color: #d68910;
+        }
+
+        .suitability-bar {
+            width: 100%;
+            height: 30px;
+            background: #ecf0f1;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .suitability-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            transition: width 0.5s ease;
+        }
+
+        .suitability-excellent {
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+        }
+
+        .suitability-good {
+            background: linear-gradient(90deg, #f1c40f, #f39c12);
+        }
+
+        .suitability-fair {
+            background: linear-gradient(90deg, #e67e22, #d35400);
+        }
+
+        .suitability-poor {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .condition-box {
+            background: white;
+            border: 2px solid #ecf0f1;
+            border-radius: 5px;
+            padding: 20px;
+        }
+
+        .condition-box h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #2ecc71;
+            padding-bottom: 10px;
+        }
+
+        .condition-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .condition-item:last-child {
+            border-bottom: none;
+        }
+
+        .condition-label {
+            color: #7f8c8d;
+            font-weight: 600;
+        }
+
+        .condition-value {
+            color: #2c3e50;
+            font-weight: 700;
+        }
+
+        .error-box {
+            background: #fadbd8;
+            border-left: 4px solid #e74c3c;
+            color: #c0392b;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .error-box.show {
+            display: block;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #ecf0f1;
+            border-top: 4px solid #2ecc71;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-button {
+                font-size: 0.9em;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌾 Crop Recommendation AI</h1>
+            <p>Smart crop selection based on soil and environmental parameters</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('mode-a')">
+                🌱 Mode A: Plant → Conditions
+            </button>
+            <button class="tab-button" onclick="switchTab('mode-b')">
+                📊 Mode B: Parameters → Crop
+            </button>
+            <button class="tab-button" onclick="switchTab('mode-c')">
+                🔍 Mode C: Suitability Analysis
+            </button>
+        </div>
+
+        <!-- Mode A: Choose Plant → Get Optimal Conditions -->
+        <div id="mode-a" class="tab-content active">
+            <h2>🌱 Select a Crop - Get Optimal Conditions</h2>
+            <p>Choose a crop and get the perfect growing conditions</p>
+
+            <div class="form-group">
+                <label for="crop-select-a">Select Crop:</label>
+                <select id="crop-select-a">
+                    <option value="">-- Choose a crop --</option>
+                    <option value="rice">Rice</option>
+                    <option value="maize">Maize</option>
+                    <option value="chickpea">Chickpea</option>
+                    <option value="kidneybeans">Kidney Beans</option>
+                    <option value="pigeonpeas">Pigeon Peas</option>
+                    <option value="mothbeans">Moth Beans</option>
+                    <option value="mungbean">Mung Bean</option>
+                    <option value="blackgram">Black Gram</option>
+                    <option value="lentil">Lentil</option>
+                    <option value="pomegranate">Pomegranate</option>
+                    <option value="banana">Banana</option>
+                    <option value="mango">Mango</option>
+                    <option value="grapes">Grapes</option>
+                    <option value="watermelon">Watermelon</option>
+                    <option value="muskmelon">Muskmelon</option>
+                    <option value="apple">Apple</option>
+                    <option value="orange">Orange</option>
+                    <option value="papaya">Papaya</option>
+                    <option value="coconut">Coconut</option>
+                    <option value="cotton">Cotton</option>
+                    <option value="sugarcane">Sugarcane</option>
+                    <option value="tobacco">Tobacco</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="getModeAConditions()">Get Optimal Conditions</button>
+                <button class="btn-secondary" onclick="resetModeA()">Reset</button>
+            </div>
+
+            <div id="loading-a" class="loading">
+                <div class="spinner"></div>
+                <p>Fetching optimal conditions...</p>
+            </div>
+
+            <div id="error-a" class="error-box"></div>
+
+            <div id="result-a" class="result-box">
+                <h3>✨ Optimal Growing Conditions</h3>
+                <div class="grid-2">
+                    <div class="condition-box">
+                        <h4>Primary Nutrients</h4>
+                        <div class="condition-item">
+                            <span class="condition-label">Nitrogen (N):</span>
+                            <span class="condition-value" id="opt-n">--</span>
+                        </div>
+                        <div class="condition-item">
+                            <span class="condition-label">Phosphorus (P):</span>
+                            <span class="condition-value" id="opt-p">--</span>
+                        </div>
+                        <div class="condition-item">
+                            <span class="condition-label">Potassium (K):</span>
+                            <span class="condition-value" id="opt-k">--</span>
+                        </div>
+                    </div>
+                    <div class="condition-box">
+                        <h4>Environmental Factors</h4>
+                        <div class="condition-item">
+                            <span class="condition-label">Temperature:</span>
+                            <span class="condition-value" id="opt-temp">--</span>
+                        </div>
+                        <div class="condition-item">
+                            <span class="condition-label">Humidity:</span>
+                            <span class="condition-value" id="opt-humid">--</span>
+                        </div>
+                        <div class="condition-item">
+                            <span class="condition-label">pH:</span>
+                            <span class="condition-value" id="opt-ph">--</span>
+                        </div>
+                        <div class="condition-item">
+                            <span class="condition-label">Rainfall:</span>
+                            <span class="condition-value" id="opt-rain">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mode B: Provide Parameters → Get Best Crop -->
+        <div id="mode-b" class="tab-content">
+            <h2>📊 Input Parameters - Get Best Crop</h2>
+            <p>Enter your soil and environmental parameters to find the best crop</p>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="n-param-b">Nitrogen (N) [kg/ha]:</label>
+                    <input type="number" id="n-param-b" value="90" min="0" max="150">
+                </div>
+                <div class="form-group">
+                    <label for="p-param-b">Phosphorus (P) [kg/ha]:</label>
+                    <input type="number" id="p-param-b" value="42" min="0" max="150">
+                </div>
+                <div class="form-group">
+                    <label for="k-param-b">Potassium (K) [kg/ha]:</label>
+                    <input type="number" id="k-param-b" value="43" min="0" max="250">
+                </div>
+                <div class="form-group">
+                    <label for="temp-param-b">Temperature [°C]:</label>
+                    <input type="number" id="temp-param-b" value="23" min="-10" max="50" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label for="humid-param-b">Humidity [%]:</label>
+                    <input type="number" id="humid-param-b" value="75" min="0" max="100">
+                </div>
+                <div class="form-group">
+                    <label for="ph-param-b">pH:</label>
+                    <input type="number" id="ph-param-b" value="6.5" min="0" max="14" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label for="rain-param-b">Rainfall [mm]:</label>
+                    <input type="number" id="rain-param-b" value="200" min="0" max="500">
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="getModeBRecommendation()">Recommend Best Crop</button>
+                <button class="btn-secondary" onclick="resetModeB()">Reset to Defaults</button>
+            </div>
+
+            <div id="loading-b" class="loading">
+                <div class="spinner"></div>
+                <p>Analyzing parameters...</p>
+            </div>
+
+            <div id="error-b" class="error-box"></div>
+
+            <div id="result-b" class="result-box">
+                <h3>🎯 Recommendation Result</h3>
+                <div class="result-item">
+                    <strong>Best Crop:</strong> <span class="result-value" id="best-crop">--</span>
+                </div>
+                <div class="result-item">
+                    <strong>Confidence:</strong> <span class="result-value" id="confidence-b">--</span>
+                </div>
+                <h4 style="margin-top: 20px; margin-bottom: 10px;">Top 5 Crop Options:</h4>
+                <div id="top-crops-b"></div>
+            </div>
+        </div>
+
+        <!-- Mode C: Both Parameters + Plant → Suitability Analysis -->
+        <div id="mode-c" class="tab-content">
+            <h2>🔍 Detailed Suitability Analysis</h2>
+            <p>Analyze crop suitability and get soil improvement recommendations</p>
+
+            <div class="form-group">
+                <label for="crop-select-c">Select Crop:</label>
+                <select id="crop-select-c">
+                    <option value="">-- Choose a crop --</option>
+                    <option value="rice">Rice</option>
+                    <option value="maize">Maize</option>
+                    <option value="chickpea">Chickpea</option>
+                    <option value="kidneybeans">Kidney Beans</option>
+                    <option value="pigeonpeas">Pigeon Peas</option>
+                    <option value="mothbeans">Moth Beans</option>
+                    <option value="mungbean">Mung Bean</option>
+                    <option value="blackgram">Black Gram</option>
+                    <option value="lentil">Lentil</option>
+                    <option value="pomegranate">Pomegranate</option>
+                    <option value="banana">Banana</option>
+                    <option value="mango">Mango</option>
+                    <option value="grapes">Grapes</option>
+                    <option value="watermelon">Watermelon</option>
+                    <option value="muskmelon">Muskmelon</option>
+                    <option value="apple">Apple</option>
+                    <option value="orange">Orange</option>
+                    <option value="papaya">Papaya</option>
+                    <option value="coconut">Coconut</option>
+                    <option value="cotton">Cotton</option>
+                    <option value="sugarcane">Sugarcane</option>
+                    <option value="tobacco">Tobacco</option>
+                </select>
+            </div>
+
+            <h3 style="margin-top: 30px; margin-bottom: 15px;">Current Soil Parameters:</h3>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="n-param-c">Nitrogen (N) [kg/ha]:</label>
+                    <input type="number" id="n-param-c" value="70" min="0" max="150">
+                </div>
+                <div class="form-group">
+                    <label for="p-param-c">Phosphorus (P) [kg/ha]:</label>
+                    <input type="number" id="p-param-c" value="30" min="0" max="150">
+                </div>
+                <div class="form-group">
+                    <label for="k-param-c">Potassium (K) [kg/ha]:</label>
+                    <input type="number" id="k-param-c" value="35" min="0" max="250">
+                </div>
+                <div class="form-group">
+                    <label for="ph-param-c">pH:</label>
+                    <input type="number" id="ph-param-c" value="7.5" min="0" max="14" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label for="temp-param-c">Temperature [°C]:</label>
+                    <input type="number" id="temp-param-c" value="25" min="-10" max="50" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label for="humid-param-c">Humidity [%]:</label>
+                    <input type="number" id="humid-param-c" value="60" min="0" max="100">
+                </div>
+                <div class="form-group">
+                    <label for="rain-param-c">Rainfall [mm]:</label>
+                    <input type="number" id="rain-param-c" value="150" min="0" max="500">
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="getModeCAnalysis()">Analyze Suitability</button>
+                <button class="btn-secondary" onclick="resetModeC()">Reset</button>
+            </div>
+
+            <div id="loading-c" class="loading">
+                <div class="spinner"></div>
+                <p>Analyzing crop suitability...</p>
+            </div>
+
+            <div id="error-c" class="error-box"></div>
+
+            <div id="result-c" class="result-box">
+                <h3>📋 Suitability Analysis Report</h3>
+
+                <div style="margin: 20px 0;">
+                    <p style="font-size: 1.1em; margin-bottom: 10px;"><strong>Suitability Score:</strong></p>
+                    <div class="suitability-bar">
+                        <div class="suitability-fill" id="suitability-fill" style="width: 0%">
+                            <span id="suitability-text">0%</span>
+                        </div>
+                    </div>
+                    <p style="text-align: center; margin-top: 10px; color: #7f8c8d;" id="suitability-summary">--</p>
+                </div>
+
+                <div class="result-item">
+                    <strong>Suitability Level:</strong> <span class="result-value" id="suitability-level">--</span>
+                </div>
+
+                <div class="result-item">
+                    <strong>Best Recommended Crop:</strong> <span class="result-value" id="best-recommended-crop">--</span>
+                </div>
+
+                <h4 style="margin-top: 20px; margin-bottom: 10px;">Nutrient Status:</h4>
+                <div id="nutrient-status"></div>
+
+                <h4 style="margin-top: 20px; margin-bottom: 10px;">Soil Improvement Recommendations:</h4>
+                <ul class="recommendation-list" id="recommendations-list"></ul>
+
+                <div class="grid-2" style="margin-top: 30px;">
+                    <div class="condition-box">
+                        <h4>Current Conditions</h4>
+                        <div class="condition-item">
+                            <span class="condition-label">N:</span>
+                            <span class="condition-value" id="current-n">--</span>
+                        </div>
+                        <div class="condition-item">
+                            <span class="condition-label">P:</span>
+                            <span class="condition-value" id="current-p">--</span>
+                        </div>
+                        <div class="condition-item">
+                            <span class="condition-label">K:</span>
+                            <span class="condition-value" id="current-k">--</span>
+                        </div>
+                        <div class="condition-item">
+                            <span class="condition-label">pH:</span>
+                            <span class="condition-value" id="current-ph">--</span>
+                        </div>
+                    </div>
+                    <div class="condition-box">
+                        <h4>Optimal for This Crop</h4>
+                        <div class="condition-item">
+                            <span class="condition-label">N:</span>
+                            <span class="condition-value" id="optimal-n">--</span>
+                        </div>
+                        <div class="condition-item">
+                            <span class="condition-label">P:</span>
+                            <span class="condition-value" id="optimal-p">--</span>
+                        </div>
+                        <div class="condition-item">
+                            <span class="condition-label">K:</span>
+                            <span class="condition-value" id="optimal-k">--</span>
+                        </div>
+                        <div class="condition-item">
+                            <span class="condition-label">pH:</span>
+                            <span class="condition-value" id="optimal-ph">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Deactivate all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+
+            // Activate button
+            event.target.classList.add('active');
+        }
+
+        // ========== MODE A: PLANT -> CONDITIONS ==========
+        function getModeAConditions() {
+            const cropName = document.getElementById('crop-select-a').value;
+            if (!cropName) {
+                showError('error-a', 'Please select a crop');
+                return;
+            }
+
+            showLoading('loading-a', true);
+            hideError('error-a');
+
+            fetch('/api/get-plant-conditions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ crop_name: cropName })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    showLoading('loading-a', false);
+                    if (data.success) {
+                        displayModeAResult(data);
+                    } else {
+                        showError('error-a', data.error || 'Failed to get conditions');
+                    }
+                })
+                .catch(err => {
+                    showLoading('loading-a', false);
+                    showError('error-a', `Error: ${err.message}`);
+                });
+        }
+
+        function displayModeAResult(data) {
+            const optimal = data.optimal_conditions;
+            document.getElementById('opt-n').textContent = optimal.N + ' kg/ha';
+            document.getElementById('opt-p').textContent = optimal.P + ' kg/ha';
+            document.getElementById('opt-k').textContent = optimal.K + ' kg/ha';
+            document.getElementById('opt-temp').textContent = optimal.temperature + ' °C';
+            document.getElementById('opt-humid').textContent = optimal.humidity + ' %';
+            document.getElementById('opt-ph').textContent = optimal.ph;
+            document.getElementById('opt-rain').textContent = optimal.rainfall + ' mm';
+
+            document.getElementById('result-a').classList.add('show');
+        }
+
+        function resetModeA() {
+            document.getElementById('crop-select-a').value = '';
+            document.getElementById('result-a').classList.remove('show');
+            hideError('error-a');
+        }
+
+        // ========== MODE B: PARAMETERS -> CROP ==========
+        function getModeBRecommendation() {
+            const params = {
+                N: parseFloat(document.getElementById('n-param-b').value),
+                P: parseFloat(document.getElementById('p-param-b').value),
+                K: parseFloat(document.getElementById('k-param-b').value),
+                temperature: parseFloat(document.getElementById('temp-param-b').value),
+                humidity: parseFloat(document.getElementById('humid-param-b').value),
+                ph: parseFloat(document.getElementById('ph-param-b').value),
+                rainfall: parseFloat(document.getElementById('rain-param-b').value)
+            };
+
+            showLoading('loading-b', true);
+            hideError('error-b');
+
+            fetch('/api/recommend-crop', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(params)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    showLoading('loading-b', false);
+                    if (data.success) {
+                        displayModeBResult(data);
+                    } else {
+                        showError('error-b', data.error || 'Failed to get recommendation');
+                    }
+                })
+                .catch(err => {
+                    showLoading('loading-b', false);
+                    showError('error-b', `Error: ${err.message}`);
+                });
+        }
+
+        function displayModeBResult(data) {
+            document.getElementById('best-crop').textContent = data.recommended_crop.toUpperCase();
+            document.getElementById('confidence-b').textContent = data.confidence_percentage + '%';
+
+            let topCropsHTML = '';
+            data.top_5_crops.forEach(crop => {
+                const percentage = (crop.probability * 100).toFixed(1);
+                topCropsHTML += `
+                    <div class="crop-card">
+                        <h4>${crop.crop}</h4>
+                        <div class="crop-probability">
+                            <div class="probability-fill" style="width: ${percentage}%">
+                                ${percentage}%
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('top-crops-b').innerHTML = topCropsHTML;
+            document.getElementById('result-b').classList.add('show');
+        }
+
+        function resetModeB() {
+            document.getElementById('n-param-b').value = '90';
+            document.getElementById('p-param-b').value = '42';
+            document.getElementById('k-param-b').value = '43';
+            document.getElementById('temp-param-b').value = '23';
+            document.getElementById('humid-param-b').value = '75';
+            document.getElementById('ph-param-b').value = '6.5';
+            document.getElementById('rain-param-b').value = '200';
+            document.getElementById('result-b').classList.remove('show');
+            hideError('error-b');
+        }
+
+        // ========== MODE C: BOTH -> SUITABILITY ==========
+        function getModeCAnalysis() {
+            const cropName = document.getElementById('crop-select-c').value;
+            if (!cropName) {
+                showError('error-c', 'Please select a crop');
+                return;
+            }
+
+            const params = {
+                crop_name: cropName,
+                N: parseFloat(document.getElementById('n-param-c').value),
+                P: parseFloat(document.getElementById('p-param-c').value),
+                K: parseFloat(document.getElementById('k-param-c').value),
+                temperature: parseFloat(document.getElementById('temp-param-c').value),
+                humidity: parseFloat(document.getElementById('humid-param-c').value),
+                ph: parseFloat(document.getElementById('ph-param-c').value),
+                rainfall: parseFloat(document.getElementById('rain-param-c').value)
+            };
+
+            showLoading('loading-c', true);
+            hideError('error-c');
+
+            fetch('/api/analyze-crop-suitability', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(params)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    showLoading('loading-c', false);
+                    if (data.success) {
+                        displayModeCResult(data);
+                    } else {
+                        showError('error-c', data.error || 'Failed to analyze suitability');
+                    }
+                })
+                .catch(err => {
+                    showLoading('loading-c', false);
+                    showError('error-c', `Error: ${err.message}`);
+                });
+        }
+
+        function displayModeCResult(data) {
+            // Suitability score
+            const score = data.suitability_score;
+            document.getElementById('suitability-fill').style.width = score + '%';
+            document.getElementById('suitability-fill').className = `suitability-fill suitability-${data.suitability_color === 'green' ? 'excellent' : data.suitability_color === 'yellowgreen' ? 'good' : data.suitability_color === 'orange' ? 'fair' : 'poor'}`;
+            document.getElementById('suitability-text').textContent = score + '%';
+            document.getElementById('suitability-level').textContent = data.suitability_level.toUpperCase();
+            document.getElementById('suitability-summary').textContent = data.summary;
+
+            document.getElementById('best-recommended-crop').textContent = data.recommended_crop.toUpperCase() + (data.is_recommended ? ' ✓' : '');
+
+            // Nutrient status
+            let statusHTML = '';
+            for (const [nutrient, status] of Object.entries(data.nutrient_status)) {
+                const badgeClass = `status-${status.toLowerCase().replace(/ /g, '-')}`;
+                statusHTML += `<span class="status-badge ${badgeClass}">${nutrient}: ${status}</span>`;
+            }
+            document.getElementById('nutrient-status').innerHTML = statusHTML;
+
+            // Recommendations
+            let recsHTML = '';
+            data.recommendations.forEach(rec => {
+                recsHTML += `<li>${rec}</li>`;
+            });
+            document.getElementById('recommendations-list').innerHTML = recsHTML || '<li>No specific recommendations needed</li>';
+
+            // Current vs Optimal
+            document.getElementById('current-n').textContent = data.current_conditions.N;
+            document.getElementById('current-p').textContent = data.current_conditions.P;
+            document.getElementById('current-k').textContent = data.current_conditions.K;
+            document.getElementById('current-ph').textContent = data.current_conditions.ph;
+
+            document.getElementById('optimal-n').textContent = data.optimal_conditions.N;
+            document.getElementById('optimal-p').textContent = data.optimal_conditions.P;
+            document.getElementById('optimal-k').textContent = data.optimal_conditions.K;
+            document.getElementById('optimal-ph').textContent = data.optimal_conditions.ph;
+
+            document.getElementById('result-c').classList.add('show');
+        }
+
+        function resetModeC() {
+            document.getElementById('crop-select-c').value = '';
+            document.getElementById('n-param-c').value = '70';
+            document.getElementById('p-param-c').value = '30';
+            document.getElementById('k-param-c').value = '35';
+            document.getElementById('ph-param-c').value = '7.5';
+            document.getElementById('temp-param-c').value = '25';
+            document.getElementById('humid-param-c').value = '60';
+            document.getElementById('rain-param-c').value = '150';
+            document.getElementById('result-c').classList.remove('show');
+            hideError('error-c');
+        }
+
+        // ========== UTILITY FUNCTIONS ==========
+        function showError(elementId, message) {
+            const errorBox = document.getElementById(elementId);
+            errorBox.textContent = message;
+            errorBox.classList.add('show');
+        }
+
+        function hideError(elementId) {
+            document.getElementById(elementId).classList.remove('show');
+        }
+
+        function showLoading(elementId, show) {
+            const loading = document.getElementById(elementId);
+            if (show) {
+                loading.classList.add('show');
+            } else {
+                loading.classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agricultural AI Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 30px rgba(0,0,0,0.2);
+        }
+
+        header {
+            background: linear-gradient(135deg, #2d5016 0%, #4a7c20 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+            gap: 0;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 20px;
+            background: none;
+            border: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 4px solid transparent;
+        }
+
+        .tab-button:hover {
+            background: #e9ecef;
+            color: #333;
+        }
+
+        .tab-button.active {
+            color: #2d5016;
+            border-bottom-color: #4a7c20;
+            background: white;
+        }
+
+        .content {
+            flex: 1;
+            padding: 40px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .stat-subtext {
+            font-size: 0.95em;
+            opacity: 0.8;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .action-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .action-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .action-card .icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .action-card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .action-card p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .action-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 1em;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .placeholder-text {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            color: #666;
+            font-style: italic;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-button {
+                flex: 1 1 50%;
+                padding: 15px;
+                font-size: 1em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌾 Agricultural AI Platform</h1>
+            <p>Smart farming solutions powered by artificial intelligence</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab(event, 'home')">🏠 Home</button>
+            <button class="tab-button" onclick="showTab(event, 'disease')">🏥 Disease Detection</button>
+            <button class="tab-button" onclick="showTab(event, 'crop')">🌾 Crop Recommendation</button>
+            <button class="tab-button" onclick="showTab(event, 'terrain')">🌍 Terrain Quality</button>
+            <button class="tab-button" onclick="showTab(event, 'segmentation')">🔬 Plant Segmentation</button>
+        </div>
+
+        <div class="content">
+            <!-- HOME TAB -->
+            <div id="home" class="tab-content active">
+                <h2>Welcome to Agricultural AI Platform</h2>
+                <p style="margin-top: 15px; color: #666; font-size: 1.1em;">Monitor and optimize your crops with AI-powered insights</p>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Plants Analyzed</h3>
+                        <div class="stat-number">2,847</div>
+                        <div class="stat-subtext">Total analysis records</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Diseases Detected</h3>
+                        <div class="stat-number">156</div>
+                        <div class="stat-subtext">Cases identified and treated</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Avg Soil Quality</h3>
+                        <div class="stat-number">87%</div>
+                        <div class="stat-subtext">Across all monitored areas</div>
+                    </div>
+                </div>
+
+                <div class="placeholder-text">
+                    💡 <strong>Placeholder Data:</strong> These statistics will be populated with real data once you start using the platform's analysis tools.
+                </div>
+
+                <h3 style="margin-top: 40px; margin-bottom: 20px;">Quick Actions</h3>
+                <div class="action-grid">
+                    <div class="action-card">
+                        <div class="icon">🏥</div>
+                        <h3>Disease Detection</h3>
+                        <p>Upload plant images to detect diseases with AI-powered analysis</p>
+                        <button class="action-button" onclick="showTab(event, 'disease')">Start Analysis</button>
+                    </div>
+                    <div class="action-card">
+                        <div class="icon">🌾</div>
+                        <h3>Crop Recommendation</h3>
+                        <p>Get AI recommendations for optimal crops based on soil parameters</p>
+                        <button class="action-button" onclick="showTab(event, 'crop')">Get Recommendations</button>
+                    </div>
+                    <div class="action-card">
+                        <div class="icon">🌍</div>
+                        <h3>Terrain Quality</h3>
+                        <p>Analyze soil conditions and environmental factors for your farm</p>
+                        <button class="action-button" onclick="showTab(event, 'terrain')">Check Terrain</button>
+                    </div>
+                    <div class="action-card">
+                        <div class="icon">🔬</div>
+                        <h3>Plant Segmentation</h3>
+                        <p>Upload plant images for AI-powered organ and tissue segmentation</p>
+                        <button class="action-button" onclick="showTab(event, 'segmentation')">Start Segmentation</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DISEASE DETECTION TAB -->
+            <div id="disease" class="tab-content">
+                <h2>🏥 Disease Detection</h2>
+                <p style="margin-top: 15px; color: #666;">Upload plant leaf images to detect diseases with AI-powered analysis</p>
+                
+                <div style="margin-top: 30px; max-width: 800px; margin-left: auto; margin-right: auto;">
+                    <div style="border: 3px dashed #667eea; border-radius: 10px; padding: 40px 20px; text-align: center; cursor: pointer; background: #f8f9ff; transition: all 0.3s ease;" id="uploadBox" onmouseover="this.style.background='#f0f2ff'" onmouseout="this.style.background='#f8f9ff'">
+                        <div style="font-size: 3em; margin-bottom: 15px;">📸</div>
+                        <div style="font-size: 1.1em; color: #333; margin-bottom: 5px;">Drag and drop your image here</div>
+                        <div style="color: #666; font-size: 0.95em;"><strong>or click to browse</strong></div>
+                        <input type="file" id="fileInput" accept="image/*" style="display: none;" />
+                    </div>
+                    
+                    <div id="fileInfo" style="margin-top: 15px; padding: 10px; background: #e8f5e9; border-radius: 5px; color: #2e7d32; display: none;"></div>
+
+                    <button id="predictBtn" style="margin-top: 20px; width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: bold; display: none;" onclick="predictDisease()">Analyze Image</button>
+
+                    <div id="loading" style="display: none; text-align: center; padding: 20px;">
+                        <div style="border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 10px;"></div>
+                        <p>Analyzing image... Please wait.</p>
+                    </div>
+
+                    <div id="resultsContent" style="display: none; background: #f8f9ff; border-radius: 10px; padding: 20px; border-left: 5px solid #667eea; margin-top: 20px;">
+                        <div style="font-size: 1.5em; color: #764ba2; font-weight: bold; margin-bottom: 10px;" id="diseaseName">-</div>
+                        <div style="color: #666; margin-bottom: 10px;" id="diseaseClass">Class: -</div>
+                        
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                            <span style="color: #666; font-weight: bold;">Confidence:</span>
+                            <div style="flex: 1; background: #e0e0e0; border-radius: 5px; height: 25px; overflow: hidden;">
+                                <div id="confidenceFill" style="background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.9em; font-weight: bold; width: 0%">
+                                    <span id="confidenceText">0%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="imagePreviewContainer" style="margin-top: 15px; border-radius: 5px; overflow: hidden; max-height: 300px;"></div>
+
+                        <div id="downloadSection" style="margin-top: 20px; display: flex; gap: 10px;"></div>
+                    </div>
+
+                    <div id="error" style="background: #ffebee; border-left: 5px solid #f44336; padding: 15px; border-radius: 5px; color: #c62828; margin-top: 15px; display: none;"></div>
+                    <div id="success" style="background: #e8f5e9; border-left: 5px solid #4CAF50; padding: 15px; border-radius: 5px; color: #2e7d32; margin-top: 15px; display: none;"></div>
+                </div>
+
+                <style>
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                </style>
+
+                <script>
+                    const uploadBox = document.getElementById('uploadBox');
+                    const fileInput = document.getElementById('fileInput');
+                    const fileInfo = document.getElementById('fileInfo');
+                    const predictBtn = document.getElementById('predictBtn');
+                    const loading = document.getElementById('loading');
+                    const resultsContent = document.getElementById('resultsContent');
+                    const errorDiv = document.getElementById('error');
+                    const successDiv = document.getElementById('success');
+
+                    let selectedFile = null;
+
+                    uploadBox.addEventListener('click', () => fileInput.click());
+
+                    fileInput.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            handleFile(file);
+                        }
+                    });
+
+                    uploadBox.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        uploadBox.style.background = '#e8ebff';
+                        uploadBox.style.borderColor = '#764ba2';
+                    });
+
+                    uploadBox.addEventListener('dragleave', () => {
+                        uploadBox.style.background = '#f8f9ff';
+                        uploadBox.style.borderColor = '#667eea';
+                    });
+
+                    uploadBox.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        uploadBox.style.background = '#f8f9ff';
+                        uploadBox.style.borderColor = '#667eea';
+                        const files = e.dataTransfer.files;
+                        if (files.length > 0) {
+                            handleFile(files[0]);
+                        }
+                    });
+
+                    function handleFile(file) {
+                        if (!file.type.startsWith('image/')) {
+                            showError('Please select an image file');
+                            return;
+                        }
+
+                        selectedFile = file;
+                        fileInfo.textContent = `📁 ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+                        fileInfo.style.display = 'block';
+                        predictBtn.style.display = 'block';
+                        hideMessages();
+                    }
+
+                    function predictDisease() {
+                        if (!selectedFile) {
+                            showError('Please select an image');
+                            return;
+                        }
+
+                        const formData = new FormData();
+                        formData.append('file', selectedFile);
+
+                        loading.style.display = 'block';
+                        resultsContent.style.display = 'none';
+                        hideMessages();
+
+                        fetch('/api/predict-disease', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) {
+                                displayResults(data);
+                                showSuccess('Disease prediction completed successfully!');
+                            } else {
+                                showError(data.error || 'Prediction failed');
+                            }
+                        })
+                        .catch(error => {
+                            showError('Network error: ' + error.message);
+                        })
+                        .finally(() => {
+                            loading.style.display = 'none';
+                        });
+                    }
+
+                    function displayResults(data) {
+                        document.getElementById('diseaseName').textContent = data.disease;
+                        document.getElementById('diseaseClass').textContent = `Class: ${data.disease_class}`;
+
+                        const confidence = data.confidence;
+                        const confidenceFill = document.getElementById('confidenceFill');
+                        confidenceFill.style.width = confidence + '%';
+                        document.getElementById('confidenceText').textContent = confidence.toFixed(1) + '%';
+
+                        const previewContainer = document.getElementById('imagePreviewContainer');
+                        previewContainer.innerHTML = `
+                            <p style="font-weight: bold; margin-bottom: 5px; color: #666;">Prediction Visualization:</p>
+                            <img src="${data.predicted_image}" alt="Predicted Disease" style="max-width: 100%; height: auto; display: block; border-radius: 5px;">
+                        `;
+
+                        const downloadSection = document.getElementById('downloadSection');
+                        downloadSection.innerHTML = `
+                            <a href="${data.predicted_image}" download style="flex: 1; background: #4CAF50; color: white; padding: 10px; border-radius: 5px; cursor: pointer; text-decoration: none; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.background='#45a049'" onmouseout="this.style.background='#4CAF50'">📥 Download Prediction</a>
+                            <a href="${data.segmentation_map}" download style="flex: 1; background: #4CAF50; color: white; padding: 10px; border-radius: 5px; cursor: pointer; text-decoration: none; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.background='#45a049'" onmouseout="this.style.background='#4CAF50'">📥 Download Segmentation</a>
+                        `;
+
+                        resultsContent.style.display = 'block';
+                    }
+
+                    function showError(message) {
+                        errorDiv.textContent = '❌ ' + message;
+                        errorDiv.style.display = 'block';
+                    }
+
+                    function showSuccess(message) {
+                        successDiv.textContent = '✓ ' + message;
+                        successDiv.style.display = 'block';
+                    }
+
+                    function hideMessages() {
+                        errorDiv.style.display = 'none';
+                        successDiv.style.display = 'none';
+                    }
+                </script>
+            </div>
+
+            <!-- CROP RECOMMENDATION TAB -->
+            <div id="crop" class="tab-content">
+                <h2>🌾 Crop Recommendation</h2>
+                <p style="margin-top: 15px; color: #666;">Get AI recommendations for optimal crops based on your soil and environmental parameters</p>
+                
+                <div style="margin-top: 30px; max-width: 600px;">
+                    <iframe src="/crop-recommendation" style="width: 100%; height: 800px; border: none; border-radius: 10px;"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(event, tabName) {
+            if (event) {
+                event.preventDefault();
+            }
+
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Show selected tab
+            const selectedTab = document.getElementById(tabName);
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+
+            // Add active class to clicked button
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+        }
+
+        function navigateTo(url) {
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+{
+  "feature_columns": [
+    "N",
+    "P",
+    "K",
+    "temperature",
+    "humidity",
+    "ph",
+    "rainfall"
+  ],
+  "label_column": "label",
+  "crop_labels": [
+    "apple",
+    "banana",
+    "blackgram",
+    "chickpea",
+    "coconut",
+    "coffee",
+    "cotton",
+    "grapes",
+    "jute",
+    "kidneybeans",
+    "lentil",
+    "maize",
+    "mango",
+    "mothbeans",
+    "mungbean",
+    "muskmelon",
+    "orange",
+    "papaya",
+    "pigeonpeas",
+    "pomegranate",
+    "rice",
+    "watermelon"
+  ],
+  "n_estimators": 100,
+  "metrics": {
+    "train_accuracy": 1.0,
+    "test_accuracy": 0.9954545454545455,
+    "train_precision": 1.0,
+    "test_precision": 0.9956709956709956,
+    "train_recall": 1.0,
+    "test_recall": 0.9954545454545455,
+    "train_f1": 1.0,
+    "test_f1": 0.9954517027687759,
+    "cv_mean": 0.9931818181818182,
+    "cv_std": 0.004251883394061294
+  },
+  "training_samples": 1760,
+  "test_samples": 440
+}

@@ -1,0 +1,389 @@
+11/22 16:36:34 - mmengine - INFO - DEBUG: Starting main()
+11/22 16:36:34 - mmengine - INFO - DEBUG: Loading config...
+11/22 16:36:34 - mmengine - INFO - DEBUG: Config loaded.
+11/22 16:36:34 - mmengine - INFO - DEBUG: Resume set.
+11/22 16:36:34 - mmengine - INFO - DEBUG: Building runner...
+11/22 16:36:34 - mmengine - INFO - DEBUG: Using default runner.
+11/22 16:36:35 - mmengine - INFO - 
+------------------------------------------------------------
+System environment:
+    sys.platform: win32
+    Python: 3.9.23 (main, Jun  5 2025, 13:25:08) [MSC v.1929 64 bit (AMD64)]
+    CUDA available: True
+    MUSA available: False
+    numpy_random_seed: 2067298066
+    GPU 0: NVIDIA GeForce RTX 3050 Ti Laptop GPU
+    CUDA_HOME: C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6
+    NVCC: Cuda compilation tools, release 12.6, V12.6.20
+    GCC: n/a
+    PyTorch: 2.1.0+cu121
+    PyTorch compiling details: PyTorch built with:
+  - C++ Version: 199711
+  - MSVC 192930151
+  - Intel(R) Math Kernel Library Version 2020.0.2 Product Build 20200624 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v3.1.1 (Git Hash 64f6bcbcbab628e96f33a62c3e975f8535a7bde4)
+  - OpenMP 2019
+  - LAPACK is enabled (usually provided by MKL)
+  - CPU capability usage: AVX2
+  - CUDA Runtime 12.1
+  - NVCC architecture flags: -gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_61,code=sm_61;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_80,code=sm_80;-gencode;arch=compute_86,code=sm_86;-gencode;arch=compute_90,code=sm_90
+  - CuDNN 8.8.1  (built against CUDA 12.0)
+  - Magma 2.5.4
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, CUDA_VERSION=12.1, CUDNN_VERSION=8.8.1, CXX_COMPILER=C:/actions-runner/_work/pytorch/pytorch/builder/windows/tmp_bin/sccache-cl.exe, CXX_FLAGS=/DWIN32 /D_WINDOWS /GR /EHsc /bigobj /FS -DUSE_PTHREADPOOL -DNDEBUG -DUSE_KINETO -DLIBKINETO_NOCUPTI -DLIBKINETO_NOROCTRACER -DUSE_FBGEMM -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE /utf-8 /wd4624 /wd4068 /wd4067 /wd4267 /wd4661 /wd4717 /wd4244 /wd4804 /wd4273, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, TORCH_DISABLE_GPU_ASSERTS=OFF, TORCH_VERSION=2.1.0, USE_CUDA=ON, USE_CUDNN=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=OFF, USE_NNPACK=OFF, USE_OPENMP=ON, USE_ROCM=OFF, 
+
+    TorchVision: 0.16.0+cu121
+    OpenCV: 4.8.0
+    MMEngine: 0.10.7
+
+Runtime environment:
+    cudnn_benchmark: True
+    dist_cfg: {'backend': 'nccl'}
+    seed: 2067298066
+    Distributed launcher: none
+    Distributed training: False
+    GPU number: 1
+------------------------------------------------------------
+
+11/22 16:36:35 - mmengine - INFO - Config:
+checkpoint_file = 'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/segnext/mscan_l_20230227-cef260d4.pth'
+crop_size = (
+    256,
+    256,
+)
+data_root = 'data/plantseg115'
+dataset_type = 'PlantSeg115Dataset'
+default_hooks = dict(
+    checkpoint=dict(by_epoch=False, interval=10000, type='CheckpointHook'),
+    logger=dict(interval=1, log_metric_by_epoch=False, type='LoggerHook'),
+    param_scheduler=dict(type='ParamSchedulerHook'),
+    timer=dict(type='IterTimerHook'))
+default_scope = 'mmseg'
+env_cfg = dict(cudnn_benchmark=True, dist_cfg=dict(backend='nccl'))
+ham_norm_cfg = dict(num_groups=32, requires_grad=True, type='GN')
+launcher = 'none'
+load_from = None
+log_level = 'INFO'
+log_processor = dict(by_epoch=False)
+model = dict(
+    backbone=dict(
+        act_cfg=dict(type='GELU'),
+        attention_kernel_paddings=[
+            2,
+            [
+                0,
+                3,
+            ],
+            [
+                0,
+                5,
+            ],
+            [
+                0,
+                10,
+            ],
+        ],
+        attention_kernel_sizes=[
+            5,
+            [
+                1,
+                7,
+            ],
+            [
+                1,
+                11,
+            ],
+            [
+                1,
+                21,
+            ],
+        ],
+        depths=[
+            3,
+            5,
+            27,
+            3,
+        ],
+        drop_path_rate=0.3,
+        drop_rate=0.0,
+        embed_dims=[
+            64,
+            128,
+            320,
+            512,
+        ],
+        init_cfg=dict(
+            checkpoint=
+            'https://download.openmmlab.com/mmsegmentation/v0.5/pretrain/segnext/mscan_l_20230227-cef260d4.pth',
+            type='Pretrained'),
+        mlp_ratios=[
+            8,
+            8,
+            4,
+            4,
+        ],
+        norm_cfg=dict(requires_grad=True, type='BN'),
+        type='MSCAN'),
+    data_preprocessor=dict(
+        bgr_to_rgb=True,
+        mean=[
+            123.675,
+            116.28,
+            103.53,
+        ],
+        pad_val=0,
+        seg_pad_val=255,
+        size=(
+            256,
+            256,
+        ),
+        std=[
+            58.395,
+            57.12,
+            57.375,
+        ],
+        type='SegDataPreProcessor'),
+    decode_head=dict(
+        align_corners=False,
+        channels=512,
+        dropout_ratio=0.1,
+        ham_channels=512,
+        in_channels=[
+            128,
+            320,
+            512,
+        ],
+        in_index=[
+            1,
+            2,
+            3,
+        ],
+        loss_decode=dict(
+            loss_weight=1.0, type='CrossEntropyLoss', use_sigmoid=False),
+        norm_cfg=dict(num_groups=32, requires_grad=True, type='GN'),
+        num_classes=2,
+        type='LightHamHead'),
+    test_cfg=dict(mode='whole'),
+    train_cfg=dict(),
+    type='EncoderDecoder')
+optim_wrapper = dict(
+    clip_grad=dict(max_norm=0.01, norm_type=2),
+    optimizer=dict(
+        betas=(
+            0.9,
+            0.999,
+        ), lr=0.0001, type='AdamW', weight_decay=0.0001),
+    type='OptimWrapper')
+param_scheduler = []
+resume = False
+test_cfg = None
+test_dataloader = None
+test_evaluator = None
+test_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(keep_ratio=False, scale=(
+        256,
+        256,
+    ), type='Resize'),
+    dict(type='LoadAnnotations'),
+    dict(type='PackSegInputs'),
+]
+train_cfg = dict(max_iters=1000, type='IterBasedTrainLoop')
+train_dataloader = dict(
+    batch_size=1,
+    dataset=dict(
+        ann_file='PlantSeg_train.txt',
+        data_prefix=dict(
+            img_path='images/train', seg_map_path='annotations/train'),
+        data_root='data/plantseg115',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(type='LoadAnnotations'),
+            dict(keep_ratio=False, scale=(
+                256,
+                256,
+            ), type='Resize'),
+            dict(type='PackSegInputs'),
+        ],
+        reduce_zero_label=False,
+        type='PlantSeg115Dataset'),
+    num_workers=0,
+    persistent_workers=False,
+    pin_memory=False,
+    sampler=dict(shuffle=True, type='InfiniteSampler'))
+train_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(type='LoadAnnotations'),
+    dict(keep_ratio=False, scale=(
+        256,
+        256,
+    ), type='Resize'),
+    dict(type='PackSegInputs'),
+]
+val_cfg = None
+val_dataloader = None
+val_evaluator = None
+vis_backends = [
+    dict(type='LocalVisBackend'),
+]
+visualizer = dict(
+    name='visualizer',
+    type='SegLocalVisualizer',
+    vis_backends=[
+        dict(type='LocalVisBackend'),
+    ])
+work_dir = './work_dirs/segnext_mscan-l_test'
+
+d:\colabecothoughts\mmsegmentation\mmsegmentation\mmseg\models\decode_heads\decode_head.py:120: UserWarning: For binary segmentation, we suggest using`out_channels = 1` to define the outputchannels of segmentor, and use `threshold`to convert `seg_logits` into a predictionapplying a threshold
+  warnings.warn('For binary segmentation, we suggest using'
+d:\colabecothoughts\mmsegmentation\mmsegmentation\mmseg\models\losses\cross_entropy_loss.py:250: UserWarning: Default ``avg_non_ignore`` is False, if you would like to ignore the certain label and average loss over non-ignore labels, which is the same with PyTorch official cross_entropy, set ``avg_non_ignore=True``.
+  warnings.warn(
+11/22 16:36:37 - mmengine - INFO - Distributed training is not used, all SyncBatchNorm (SyncBN) layers in the model will be automatically reverted to BatchNormXd layers if they are used.
+11/22 16:36:37 - mmengine - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+before_train:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) DistSamplerSeedHook                
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+after_train_epoch:
+(NORMAL      ) IterTimerHook                      
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_val:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+before_val_epoch:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+before_val_iter:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_val_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+after_val:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+after_train:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_test:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+before_test_epoch:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+before_test_iter:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_test_iter:
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_test_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_test:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+after_run:
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+11/22 16:36:37 - mmengine - INFO - DEBUG: Runner built.
+11/22 16:36:37 - mmengine - INFO - Runner built. Starting training...
+11/22 16:36:37 - mmengine - INFO - This may take a moment to load the first batch...
+11/22 16:36:37 - mmengine - INFO - DEBUG: About to call runner.train()
+11/22 16:36:37 - mmengine - ERROR - C:\Users\souba\miniconda3\lib\site-packages\mmengine\logging\logger.py - print_log - 355 - Training error: Failed to load `ann_file` data/plantseg115\PlantSeg_train.txt
+Traceback (most recent call last):
+  File "D:\colabecothoughts\PlantSeg\tools\train.py", line 132, in main
+    runner.train()
+  File "C:\Users\souba\miniconda3\lib\site-packages\mmengine\runner\runner.py", line 1728, in train
+    self._train_loop = self.build_train_loop(
+  File "C:\Users\souba\miniconda3\lib\site-packages\mmengine\runner\runner.py", line 1520, in build_train_loop
+    loop = LOOPS.build(
+  File "C:\Users\souba\miniconda3\lib\site-packages\mmengine\registry\registry.py", line 570, in build
+    return self.build_func(cfg, *args, **kwargs, registry=self)
+  File "C:\Users\souba\miniconda3\lib\site-packages\mmengine\registry\build_functions.py", line 121, in build_from_cfg
+    obj = obj_cls(**args)  # type: ignore
+  File "C:\Users\souba\miniconda3\lib\site-packages\mmengine\runner\loops.py", line 222, in __init__
+    super().__init__(runner, dataloader)
+  File "C:\Users\souba\miniconda3\lib\site-packages\mmengine\runner\base_loop.py", line 26, in __init__
+    self.dataloader = runner.build_dataloader(
+  File "C:\Users\souba\miniconda3\lib\site-packages\mmengine\runner\runner.py", line 1370, in build_dataloader
+    dataset = DATASETS.build(dataset_cfg)
+  File "C:\Users\souba\miniconda3\lib\site-packages\mmengine\registry\registry.py", line 570, in build
+    return self.build_func(cfg, *args, **kwargs, registry=self)
+  File "C:\Users\souba\miniconda3\lib\site-packages\mmengine\registry\build_functions.py", line 121, in build_from_cfg
+    obj = obj_cls(**args)  # type: ignore
+  File "d:\colabecothoughts\mmsegmentation\mmsegmentation\mmseg\datasets\plantseg115.py", line 90, in __init__
+    super().__init__(
+  File "d:\colabecothoughts\mmsegmentation\mmsegmentation\mmseg\datasets\basesegdataset.py", line 142, in __init__
+    self.full_init()
+  File "C:\Users\souba\miniconda3\lib\site-packages\mmengine\dataset\base_dataset.py", line 298, in full_init
+    self.data_list = self.load_data_list()
+  File "d:\colabecothoughts\mmsegmentation\mmsegmentation\mmseg\datasets\basesegdataset.py", line 239, in load_data_list
+    assert osp.isfile(self.ann_file), \
+AssertionError: Failed to load `ann_file` data/plantseg115\PlantSeg_train.txt
+Traceback (most recent call last):
+  File "D:\colabecothoughts\PlantSeg\tools\train.py", line 146, in <module>
+    main()
+  File "D:\colabecothoughts\PlantSeg\tools\train.py", line 132, in main
+    runner.train()
+  File "C:\Users\souba\miniconda3\lib\site-packages\mmengine\runner\runner.py", line 1728, in train
+    self._train_loop = self.build_train_loop(
+  File "C:\Users\souba\miniconda3\lib\site-packages\mmengine\runner\runner.py", line 1520, in build_train_loop
+    loop = LOOPS.build(
+  File "C:\Users\souba\miniconda3\lib\site-packages\mmengine\registry\registry.py", line 570, in build
+    return self.build_func(cfg, *args, **kwargs, registry=self)
+  File "C:\Users\souba\miniconda3\lib\site-packages\mmengine\registry\build_functions.py", line 121, in build_from_cfg
+    obj = obj_cls(**args)  # type: ignore
+  File "C:\Users\souba\miniconda3\lib\site-packages\mmengine\runner\loops.py", line 222, in __init__
+    super().__init__(runner, dataloader)
+  File "C:\Users\souba\miniconda3\lib\site-packages\mmengine\runner\base_loop.py", line 26, in __init__
+    self.dataloader = runner.build_dataloader(
+  File "C:\Users\souba\miniconda3\lib\site-packages\mmengine\runner\runner.py", line 1370, in build_dataloader
+    dataset = DATASETS.build(dataset_cfg)
+  File "C:\Users\souba\miniconda3\lib\site-packages\mmengine\registry\registry.py", line 570, in build
+    return self.build_func(cfg, *args, **kwargs, registry=self)
+  File "C:\Users\souba\miniconda3\lib\site-packages\mmengine\registry\build_functions.py", line 121, in build_from_cfg
+    obj = obj_cls(**args)  # type: ignore
+  File "d:\colabecothoughts\mmsegmentation\mmsegmentation\mmseg\datasets\plantseg115.py", line 90, in __init__
+    super().__init__(
+  File "d:\colabecothoughts\mmsegmentation\mmsegmentation\mmseg\datasets\basesegdataset.py", line 142, in __init__
+    self.full_init()
+  File "C:\Users\souba\miniconda3\lib\site-packages\mmengine\dataset\base_dataset.py", line 298, in full_init
+    self.data_list = self.load_data_list()
+  File "d:\colabecothoughts\mmsegmentation\mmsegmentation\mmseg\datasets\basesegdataset.py", line 239, in load_data_list
+    assert osp.isfile(self.ann_file), \
+AssertionError: Failed to load `ann_file` data/plantseg115\PlantSeg_train.txt

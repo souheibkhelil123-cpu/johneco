@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "finaleco",
+			"path": "."
+		},
+		{
+			"name": "recommendation_ai",
+			"path": "../colabecothoughts/recommendation_ai"
+		}
+	],
+	"settings": {}
+}
