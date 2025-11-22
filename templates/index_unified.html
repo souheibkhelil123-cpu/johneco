@@ -12,26 +12,45 @@
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
             min-height: 100vh;
             padding: 20px;
+            position: relative;
+        }
+        /* #56ab2f and #a8e063 is a natural, fresh green gradient */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('https://www.transparenttextures.com/patterns/diamond-upholstery.png');
+            opacity: 0.10;
+            z-index: 0;
+            pointer-events: none;
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
         .header {
             text-align: center;
             color: white;
             margin-bottom: 30px;
+            padding-top: 30px;
+            padding-bottom: 10px;
+            border-radius: 20px;
+            background: rgba(67,233,123,0.10);
+            box-shadow: 0 2px 24px rgba(67,233,123,0.08);
         }
-        .header h1 {
-            font-size: 2.5em;
+        .header img {
             margin-bottom: 10px;
-        }
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
+            max-width: 220px;
+            max-height: 220px;
+            border-radius: 30px;
+            background: transparent;
+            box-shadow: none;
+            padding: 0;
         }
         .tabs {
             display: flex;
@@ -61,38 +80,40 @@
             transform: translateY(-2px);
         }
         .tab-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #256d1b 100%);
             color: #fff;
             opacity: 1;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+            box-shadow: 0 2px 10px rgba(56,142,60,0.15);
         }
         .tab-content {
             display: none;
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            background: rgba(255,255,255,0.98);
+            border-radius: 18px;
+            padding: 32px;
+            box-shadow: 0 10px 40px rgba(102,126,234,0.10), 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 30px;
         }
         .tab-content.active {
             display: block;
         }
         .upload-box {
-            border: 3px dashed #667eea;
-            border-radius: 10px;
+            border: 3px dashed #388e3c;
+            border-radius: 14px;
             padding: 40px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
             background: #f8f9ff;
             margin-bottom: 20px;
+            box-shadow: 0 2px 12px rgba(102,126,234,0.06);
         }
         .upload-box:hover {
-            border-color: #764ba2;
-            background: #f0f2ff;
+            border-color: #256d1b;
+            background: #e6f4ea;
         }
         .upload-box.dragover {
-            border-color: #764ba2;
-            background: #e8ebff;
+            border-color: #256d1b;
+            background: #d0ecd7;
         }
         .upload-icon {
             font-size: 3em;
@@ -152,10 +173,10 @@
         }
         .results {
             display: none;
-            background: #f0f2ff;
+            background: #f0fff4;
             padding: 20px;
             border-radius: 10px;
-            border-left: 5px solid #667eea;
+            border-left: 5px solid #388e3c;
             margin-top: 20px;
         }
         .results.show {
@@ -195,7 +216,7 @@
         }
         .spinner {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            border-top: 4px solid #388e3c;
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -210,7 +231,9 @@
             max-width: 100%;
             max-height: 400px;
             margin: 20px 0;
-            border-radius: 10px;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px rgba(102,126,234,0.10);
+            border: 2px solid #e0e7ff;
         }
         .confidence-bar {
             width: 100%;
@@ -222,7 +245,7 @@
         }
         .confidence-fill {
             height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(90deg, #388e3c 0%, #256d1b 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -243,8 +266,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Agricultural AI System</h1>
-            <p>Crop Recommendation & Disease Detection</p>
+            <img src="/static/LOGO.png" alt="Logo">
+            <p style="font-size: 1.3em; color: #f3f3f3; opacity: 0.98; font-weight: 600; letter-spacing: 0.5px;">Crop Recommendation &amp; Disease Detection</p>
         </div>
 
         <div class="tabs">
@@ -283,7 +306,7 @@
 
             <div class="results" id="results">
                 <div id="imageContainer" style="text-align: center; margin-top: 20px;"></div>
-                <div id="diseasePretty" style="text-align:center; font-size:1.5em; font-weight:bold; color:#764ba2; margin-top:20px;"></div>
+                <div id="diseasePretty" style="text-align:center; font-size:1.5em; font-weight:bold; color:#256d1b; margin-top:20px;"></div>
             </div>
         </div>
 

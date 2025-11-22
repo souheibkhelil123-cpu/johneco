@@ -25,7 +25,7 @@ print(f"[INFO] Template folder (absolute): {template_dir}")
 print(f"[INFO] Template folder exists: {os.path.exists(template_dir)}")
 if os.path.exists(template_dir):
     print(f"[INFO] Files in template folder: {os.listdir(template_dir)}")
-app = Flask(__name__, template_folder=template_dir)
+app = Flask(__name__, template_folder=template_dir, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 
 # ===============================================
 # CROP RECOMMENDATION SETUP
