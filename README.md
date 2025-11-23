@@ -39,17 +39,6 @@ The app will start at: **http://localhost:5000**
 - Health scoring system
 - 30-day growth projections
 
-## Project Structure
-```
-web_app.py              # Main Flask application
-requirements.txt        # Python dependencies
-templates/
-  ├── index.html       # Main menu page
-  ├── disease_detection.html
-  ├── terrain_quality.html
-  └── plants_analysis.html
-```
-
 ## API Endpoints
 
 - `GET /` - Main menu
@@ -67,19 +56,4 @@ This is a **proof of concept** demonstrating:
 - ✅ Working web interface with 3 main modules
 - ✅ Drag-and-drop image upload
 - ✅ Sensor data input forms
-- ✅ Mock AI analysis (ready for real model integration)
 - ✅ Real-time results display
-
-**Ready for integration with:**
-- Custom disease detection models
-- Real sensor data streams
-- Advanced plant analysis algorithms
-
-## Customization
-
-To integrate your own AI models:
-1. Replace mock predictions in `/api/predict-disease` with your model
-2. Update sensor data processing in `/api/analyze-terrain`
-3. Implement custom logic in `/api/analyze-plants`
-
-Enjoy! 🚀
